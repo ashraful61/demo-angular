@@ -8,25 +8,12 @@
   padding: 10px;
 }
 
-.gate-container {
+.single-gate {
   position: absolute;
-  top: 235px;
-  left: 221px;
+  // left: 434px;
+  // top: 105px;
 }
-.gate-1{
-    width: 80px;
-}
-.gate-2 {
-  position: absolute;
-  width: 80px;
-  left: 250px;
-  top: 10px;
 
-}
-.gate-2-div {
-  position: absolute;
-  width: 80px;
-  left: 250px;
-  top: 70px;
-
+.gate-name {
+  display: none;
 }

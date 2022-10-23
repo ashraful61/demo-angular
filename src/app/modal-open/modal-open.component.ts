@@ -11,6 +11,7 @@ export class ModalOpenComponent implements OnInit {
 
   registerForm: FormGroup;
   submitted: boolean;
+  gateList: any[] = [];
   
   constructor(
     public dialogRef: MatDialogRef<ModalOpenComponent>,
@@ -22,14 +23,14 @@ export class ModalOpenComponent implements OnInit {
     this.submitted = false
     this.registerForm = this.formBuilder.group({
       name: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email,Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')]],
+      // email: ['', [Validators.required, Validators.email,Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')]],
       subject: ['', Validators.required],
       message: ['', Validators.required],
    });
    }
 
   ngOnInit(): void {
-    // console.log(this.data)
+    console.log(this.data)
 
     this.formValueSet()
   }
@@ -37,9 +38,9 @@ export class ModalOpenComponent implements OnInit {
   formHandler = () => {
   
   } 
-
+//set value for product id and gate Id
   formValueSet = () => {
-    this.registerForm.patchValue({"subject": this.data});
+    this.registerForm.patchValue({"message": this.data?.gateNumber, 'subject': this.data?.gateNumber});
   }
 
   get f() { 
@@ -52,9 +53,31 @@ export class ModalOpenComponent implements OnInit {
       if (this.registerForm.invalid) {
           return;
       }
-     alert('Submitted successfully')
-     this.dialogRef.close()
+
+     let gates = {
+         id: this.registerForm.value.message,
+         name: this.registerForm.value.name,
+         product_id: parseInt(this.registerForm.value.subject),
+         left: this.data.leftPosition,
+         top: this.data.topPosition
+     }
+     this.getAllGates()
+     this.gateList.push(gates)
+
+     localStorage.setItem('gates', JSON.stringify(this.gateList))
+
+     this.dialogRef.close({data:'ok'})
       
+  }
+
+  getAllGates = () => {
+    this.gateList = []
+    const gates = localStorage.getItem('gates')
+    if(!!gates) {
+      this.gateList = JSON.parse(gates)
+      return  this.gateList
+    }
+    return this.gateList
   }
 
   closeDialogModal = () => {

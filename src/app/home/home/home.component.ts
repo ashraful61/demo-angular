@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { GlobalServiceService } from 'src/app/global-service.service';
 import { ModalOpenComponent } from 'src/app/modal-open/modal-open.component';
 @Component({
   selector: 'app-home',
@@ -8,67 +9,98 @@ import { ModalOpenComponent } from 'src/app/modal-open/modal-open.component';
 })
 export class HomeComponent implements OnInit {
 
-  products = [
-    { id: 1, name: 'Product 1', gate_no: '1' },
-    { id: 2, name: 'Product 2', gate_no: '2' }
-  ];
-  gateOneProduct = {
-    id: 1, 
-    name: 'Product 1', 
-    gate_no: '1'
-  }
-  gateTwoProduct = {
-    id: 2, 
-    name: 'Product 2', 
-    gate_no: '2'
-  }
-  selectedValue:any
-  productName: any;
-  filterProduct: any
-  pname: any;
-  pName: any;
-  constructor( public dialog: MatDialog,) { }
+  selectedProductValue:any;
+  selectedGateValue:any;
+  xPosition: any;
+  yPosition: any;
+  gateList: any[] = [];
+  selectedProductObj: any;
+  selectedGateObj: any;
+
+  constructor( 
+    public dialog: MatDialog,
+    public globalService: GlobalServiceService
+    ) { }
 
   ngOnInit(): void {
+  this.getAllGates()
   }
 
-  handleContactForm = (data: any) => {
-    // cons
+  //Add gate dialog form gate
+  handleOpenDialog = (e: any) => {
+    const clickedId:any = document.querySelector('#main-img-container')
+    this.getCursorPosition(clickedId, e)
+    //get all gates from local storage
+    this.getAllGates()
+
     const dialogRef = this.dialog.open(ModalOpenComponent, {
       disableClose: true,
       width: '50%',
       height: '85%',
       maxWidth: '90vw',
-      data: data,
+      data: {
+        gateNumber: this.gateList?.length + 1,
+        leftPosition: this.xPosition,
+        topPosition: this.yPosition
+      },
     });
 
     // After closed is fired when dialog component send data 
     dialogRef.afterClosed().subscribe((result) => {
-      if (result.data == 'view-catalog') {
+      if (result.data == 'ok') {
+        this.getAllGates()
       } 
     });
   }
 
-  changeProduct = (e: any) => {
-  
-    console.log(e.value)
-    // this.pName = e.value
-    this.productName = e.value
+  getAllGates = () => {
+    this.gateList = []
+    const gates = localStorage.getItem('gates')
+    if(!!gates) {
+      this.gateList = JSON.parse(gates)
+      console.log(this.gateList)
+      return  this.gateList
+    }
+    return this.gateList
+  }
+
+
+  //Change product
+  onChangeProduct = (e: any) => {
+    console.log(e)
+    this.selectedProductObj = e 
+  }
+
+  //Change gate
+  onChangeGate = (e: any) => {
+    console.log(e)
+    this.selectedGateObj = e 
    
   }
+
+
+
   handleScan = () => {
-    this.pName = this.productName
-  
-    const popupMessage:any = document.getElementsByClassName('popup-message')
-    for (const pm of popupMessage) {
-      pm.classList.add('d-none')
+    if(this.selectedProductObj.id === this.selectedGateObj.product_id ) {
+     const gateId: any =  document.getElementById(this.selectedGateObj.id) as HTMLElement
+      gateId.style.display = 'block'
     }
-   if(this.productName === this.gateOneProduct.name) {
-      document.getElementById('gateOneId')?.classList.remove('d-none')
-   }
-   else if(this.productName === this.gateTwoProduct.name) {
-    document.getElementById('gateTwoId')?.classList.remove('d-none')
-   }
   }
+
+  getCursorPosition(clickId:any, event:any) {
+    const rect = clickId.getBoundingClientRect()
+    this.xPosition = event.clientX - rect.left
+    this.yPosition = event.clientY - rect.top
+    console.log("x: " + this.xPosition + " y: " + this.yPosition)
+}
+
+clearStorage = () => {
+  localStorage.clear()
+  this.getAllGates()
+}
+
+closePopupMessage = (e: any) => {
+  e.target.parentNode.style.display = 'none'
+}
 
 }
