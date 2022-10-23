@@ -2,7 +2,44 @@
 <section>
     <div class="container-fluid pt-3">
         <div class="bg-img">
+              <div class="gate-container">
+                 <div>
+                    <button class="gate-1 btn btn-primary" >Gate 1</button>
+                    <div id="gateOneId" class="popup-message d-none">
+                      <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <strong>   {{pName + ' found'}}</strong>
+                        <button type="button" class="btn-close" aria-label="Close"></button>
+                      </div>
+                   
+
+                    </div>
+                 </div>
+                 <div>
+                  <button  class="gate-2 btn btn-primary">Gate 2</button>
+                    <div id="gateTwoId" class="popup-message gate-2-div d-none">
+                      <div style="width:200px" class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <strong>   {{pName + ' found'}}</strong>
+                        <button class="close-btn" type="button" class="btn-close" aria-label="Close"></button>
+                      </div>
+                    </div>
+                 </div>
+              </div>
 
         </div>
+
+        <!-- Product list  -->
+        <h4 class="mt-5">Select product</h4>
+        <mat-form-field appearance="fill">
+          <mat-label>select product</mat-label>
+          <mat-select [(ngModel)]="selectedValue" name="product" (selectionChange)="changeProduct($event)">
+            <mat-option *ngFor="let product of products" [value]="product.name">
+              {{product.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <button class="btn btn-primary" (click)="handleScan()">Scan</button>
+
+        
     </div>
 </section>
